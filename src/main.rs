@@ -1,4 +1,7 @@
-use eframe::egui::{CentralPanel, Context, Grid};
+use egui::{CentralPanel, Context, Grid, Widget};
+use ping::Ping;
+
+mod ping;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -27,6 +30,10 @@ impl eframe::App for SpinnerApp {
             Grid::new("Spinner grid").num_columns(2).show(ui, |ui| {
                 ui.label("Default");
                 ui.spinner();
+                ui.end_row();
+
+                ui.label("Ping");
+                Ping::new().ui(ui);
                 ui.end_row();
             });
         });
