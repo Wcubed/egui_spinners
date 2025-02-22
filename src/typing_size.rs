@@ -1,4 +1,4 @@
-use egui::{vec2, Color32, Response, Sense, Stroke, Ui, Widget, WidgetInfo, WidgetType};
+use egui::{vec2, Color32, Response, Sense, Ui, Widget, WidgetInfo, WidgetType};
 
 #[must_use = "You should put this widget in a ui with `ui.add(widget);`"]
 #[derive(Default)]
@@ -46,12 +46,12 @@ impl Typing {
         let spacing = (rect.width() - (2.0 * radius * dot_amount as f32)) / (dot_amount - 1) as f32;
 
         for index in 0..dot_amount {
-            let factor = (time - time_offset * index as f64).sin() * 0.4 + 0.6;
+            let factor = (time - time_offset * index as f64).sin() * 0.3 + 0.7;
 
             ui.painter().circle_filled(
                 rect.left_center() + vec2(radius + (radius * 2.0 + spacing) * index as f32, 0.0),
-                radius,
-                color.gamma_multiply(factor as f32),
+                radius * factor as f32,
+                color,
             );
         }
     }
