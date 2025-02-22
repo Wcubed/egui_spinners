@@ -1,0 +1,4 @@
+{
+    // Use dedicated target directory for rust analyzer.
+    "rust-analyzer.cargo.targetDir": true
+}
