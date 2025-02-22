@@ -1,7 +1,9 @@
 use egui::{vec2, CentralPanel, Context, Grid, Widget};
 use ping::Ping;
+use planets::Planets;
 
 mod ping;
+mod planets;
 mod typing_fade;
 mod typing_size;
 
@@ -47,6 +49,10 @@ impl eframe::App for SpinnerApp {
 
                     ui.label("Typing");
                     typing_size::Typing::new().ui(ui);
+                    ui.end_row();
+
+                    ui.label("Planets");
+                    Planets::new().ui(ui);
                     ui.end_row();
                 });
         });
