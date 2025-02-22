@@ -1,7 +1,9 @@
 use egui::{CentralPanel, Context, Grid, Widget};
 use ping::Ping;
+use typing::Typing;
 
 mod ping;
+mod typing;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -34,6 +36,10 @@ impl eframe::App for SpinnerApp {
 
                 ui.label("Ping");
                 Ping::new().ui(ui);
+                ui.end_row();
+
+                ui.label("Typing");
+                Typing::new().ui(ui);
                 ui.end_row();
             });
         });

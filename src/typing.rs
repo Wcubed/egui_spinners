@@ -2,13 +2,13 @@ use egui::{vec2, Color32, Response, Sense, Stroke, Ui, Widget, WidgetInfo, Widge
 
 #[must_use = "You should put this widget in a ui with `ui.add(widget);`"]
 #[derive(Default)]
-pub struct Ping {
+pub struct Typing {
     /// Uses the style's `interact_size` if `None`.
-    size: Option<f32>,
+    width: Option<f32>,
     color: Option<Color32>,
 }
 
-impl Ping {
+impl Typing {
     /// Create a new spinner that uses the style's `interact_size` unless changed.
     pub fn new() -> Self {
         Self::default()
@@ -17,8 +17,8 @@ impl Ping {
     /// Sets the spinner's size. The size sets both the height and width, as the spinner is always
     /// square. If the size isn't set explicitly, the active style's `interact_size` is used.
     #[inline]
-    pub fn size(mut self, size: f32) -> Self {
-        self.size = Some(size);
+    pub fn width(mut self, size: f32) -> Self {
+        self.width = Some(size);
         self
     }
 
@@ -29,45 +29,45 @@ impl Ping {
         self
     }
 
-    fn paint_at(&self, ui: &mut Ui, rect: egui::Rect) {
+    fn paint_at(&self, ui: &mut Ui, rect: egui::Rect, radius: f32) {
         if !ui.is_rect_visible(rect) {
             return;
         }
 
+        let dot_amount = 3;
+        let speed = 3.0;
+
         let color = self
             .color
             .unwrap_or_else(|| ui.visuals().strong_text_color());
-        let max_radius = rect.height() / 2.0;
-        let time = ui.input(|i| i.time);
+        let time = ui.input(|i| i.time) * speed;
+        let time_offset = 2.0 / dot_amount as f64;
 
-        let ping_multiplier = 1.5;
-        let progress = ((time / ping_multiplier) % 1.0) as f32;
-        // There is only a "ping" on screen a fraction of the time.
-        let ping_progress = progress * ping_multiplier as f32;
+        let spacing = (rect.width() - (2.0 * radius * dot_amount as f32)) / (dot_amount - 1) as f32;
 
-        ui.painter()
-            .circle_filled(rect.center(), max_radius * 0.1, color);
+        for index in 0..dot_amount {
+            let factor = (time - time_offset * index as f64).sin() * 0.4 + 0.6;
 
-        if ping_progress < 1.0 {
-            let radius = max_radius * ping_progress;
-            ui.painter().circle_stroke(
-                rect.center(),
+            ui.painter().circle_filled(
+                rect.left_center() + vec2(radius + (radius * 2.0 + spacing) * index as f32, 0.0),
                 radius,
-                Stroke::new(2.0, color.gamma_multiply(1.0 - ping_progress)),
+                color.gamma_multiply(factor as f32),
             );
         }
     }
 }
 
-impl Widget for Ping {
+impl Widget for Typing {
     fn ui(self, ui: &mut Ui) -> Response {
-        let size = self
-            .size
-            .unwrap_or_else(|| ui.style().spacing.interact_size.y);
+        let width = self
+            .width
+            .unwrap_or_else(|| ui.style().spacing.interact_size.x);
 
-        let (rect, response) = ui.allocate_exact_size(vec2(size, size), Sense::hover());
+        let radius = width * 0.1;
+
+        let (rect, response) = ui.allocate_exact_size(vec2(width, radius * 2.0), Sense::hover());
         response.widget_info(|| WidgetInfo::new(WidgetType::ProgressIndicator));
-        self.paint_at(ui, rect);
+        self.paint_at(ui, rect, radius);
 
         response
     }
