@@ -1,7 +1,9 @@
+use circle_dots::CircleDots;
 use egui::{vec2, CentralPanel, Context, Grid, Widget};
 use ping::Ping;
 use planets::Planets;
 
+mod circle_dots;
 mod ping;
 mod planets;
 mod typing_fade;
@@ -53,6 +55,10 @@ impl eframe::App for SpinnerApp {
 
                     ui.label("Planets");
                     Planets::new().ui(ui);
+                    ui.end_row();
+
+                    ui.label("Dots");
+                    CircleDots::new().ui(ui);
                     ui.end_row();
                 });
         });
