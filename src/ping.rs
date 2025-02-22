@@ -39,16 +39,23 @@ impl Ping {
             .unwrap_or_else(|| ui.visuals().strong_text_color());
         let max_radius = rect.height() / 2.0;
         let time = ui.input(|i| i.time);
-        let progress = (time % 1.0) as f32;
-        let radius = max_radius * progress;
+
+        let ping_multiplier = 1.5;
+        let progress = ((time / ping_multiplier) % 1.0) as f32;
+        // There is only a "ping" on screen a fraction of the time.
+        let ping_progress = progress * ping_multiplier as f32;
 
         ui.painter()
             .circle_filled(rect.center(), max_radius * 0.1, color);
-        ui.painter().circle_stroke(
-            rect.center(),
-            radius,
-            Stroke::new(1.0, color.gamma_multiply(1.0 - progress)),
-        );
+
+        if ping_progress < 1.0 {
+            let radius = max_radius * ping_progress;
+            ui.painter().circle_stroke(
+                rect.center(),
+                radius,
+                Stroke::new(2.0, color.gamma_multiply(1.0 - ping_progress)),
+            );
+        }
     }
 }
 
